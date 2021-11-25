@@ -1,0 +1,19 @@
+ a = c13 - c15
+ b = c14 - c15
+
+ clasificar
+
+ umbral 0 a -6 -> 1
+ else 0
+
+ c = a*b
+
+ d =  c14 < 280 -> 1
+  else -> 0
+
+ e = c*d
+
+ f = 273.15 < lst < 283.15 -> 0
+
+ clip entre f y e 
+
