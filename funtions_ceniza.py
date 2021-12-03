@@ -1,11 +1,17 @@
 import os
 import re
 import sys
-import glob
+from glob import glob
 import numpy as np
 from scipy.signal import convolve2d
 from osgeo import gdal,osr
 from netCDF4 import Dataset
+
+def list_file(path_input,band):
+    firstfile=glob(path_input+"*"+band+"*")
+    firstfile.sort()
+    last=firstfile[-1]
+    return last
 
 def get_file(files, band):
     for file in files:
@@ -33,18 +39,9 @@ def get_projection(nc, nx, ny):
     projection = srs.ExportToWkt()
     #print("Geotransform ", geotransform, " Projection ", projection)
 
-def leeNC(path):
-    global projection
-    print('Path ', path)
-    r = re.search('CG_ABI-L2-([A-Z]{3})', path)
-    variable = r.groups(0)[0]
-    nc = Dataset(path, 'r')
-    data = nc.variables[variable][:].data
-    if not projection:
-        nx = data.shape[0]
-        ny = data.shape[1]
-        get_projection(nc, nx, ny)
-        #get_projection(path)
+def leeNC(path_input,var):
+    nc = Dataset(path_input, 'r')
+    data = nc.variables[var][:].data
     return data
 
 def array2raster(newRasterfilename, array):
@@ -63,3 +60,34 @@ def array2raster(newRasterfilename, array):
     #outRasterSRS.ImportFromEPSG(4326)
     #outRaster.SetProjection(outRasterSRS.ExportToWkt())
     outband.FlushCache()
+
+def ceniza_umbral(a,b,c,b14):
+    cenum=np.zeros(a.shape)
+    nx=a.shape[0]
+    ny=a.shape[1]
+    for i in range(nx):
+        for j in range(ny):
+            if ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2)):
+                cenum[i,j]=1
+            elif ((a[i,j] <= 1) and (b[i,j] >= -0.5) and (c[i,j] >= 2)):
+                cenum[i,j]=2
+            elif ((a[i,j] <= 3) and (b[i,j] >= -1) and (c[i,j] >= 2) and (b14[i,j] < 273)):
+                cenum[i,j]=3
+            else: 
+                cenum[i,j]=0
+    return cenum
+
+def creaTif(dsRef,npy,output):
+    geotransform = dsRef.GetGeoTransform()
+    nx = npy.shape[0]
+    ny = npy.shape[1]
+    print(nx,ny)
+    print(npy.shape)
+    dst_ds = gdal.GetDriverByName('GTiff').Create(output, ny, nx, 1, gdal.GDT_Float32)
+    dst_ds.SetGeoTransform(geotransform)
+    srs = osr.SpatialReference()
+    srs.ImportFromWkt(dsRef.GetProjectionRef())
+    dst_ds.SetProjection(srs.ExportToWkt())
+    dst_ds.GetRasterBand(1).WriteArray(npy)
+    dst_ds.FlushCache()
+    dst_ds = None

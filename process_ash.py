@@ -1,42 +1,38 @@
 '''
 Este codigo hace ceniza'''
-import funtions
+import funtions_ceniza
 import sys
 import glob
 import numpy as np
-if len(sys.argv) < 2:
-    print("Usanza: ", sys.argv[0], " <sYYYYjjjhhmm>")
-    exit(1)
-
-# find_files
-sdate_id = sys.argv[1]
-files = glob.glob(datadir+'*'+sdate_id+'*.nc')
-pathC11 = funtions.funtions.get_file(files, 'C11')
-pathC13 = funtions.get_file(files, 'C13')
-pathC14 = funtions.get_file(files, 'C14')
-pathC15 = funtions.get_file(files, 'C15')
-#    pathLST = funtions.get_file(files, 'LST')
-
-b11 = funtions.leeNC(pathC11)
-b13 = funtions.leeNC(pathC13)
-b14 = funtions.leeNC(pathC14)
-b15 = funtions.leeNC(pathC15)
-
+from osgeo import gdal,osr
+path_input="D:\\PROY_CENIZA_GIT\\ceniza\\input\\"
+path_output="D:\PROY_CENIZA_GIT\ceniza\output\\"
+#Ultimo netCDF
+print ("Listando bandas")
+b04nc=funtions_ceniza.list_file(path_input,'C04_')
+b07nc=funtions_ceniza.list_file(path_input,'C07_')
+b11nc=funtions_ceniza.list_file(path_input,'C11_')
+b13nc=funtions_ceniza.list_file(path_input,'C13_')
+b14nc=funtions_ceniza.list_file(path_input,'C14_')
+b15nc=funtions_ceniza.list_file(path_input,'C15_')
+#Lee netCDF
+print ("Netcdf to NP")
+b04 = funtions_ceniza.leeNC(b04nc,"CMI")
+b07 = funtions_ceniza.leeNC(b07nc,"CMI")
+b11 = funtions_ceniza.leeNC(b11nc,"CMI")
+b13 = funtions_ceniza.leeNC(b13nc,"CMI")
+b14 = funtions_ceniza.leeNC(b14nc,"CMI")
+b15 = funtions_ceniza.leeNC(b15nc,"CMI")
+#Algoritmo
+print ("Aplicando algorítmo")
 a = np.subtract(b13, b15)
-b = np.subtract(b14, b15)
+b = np.subtract(b11, b13)
+c = np.subtract(b07, b13)
 
-a = np.where(a <= 0, 1.0, 0.0)
-b = np.where(b <= 0, 1.0, 0.0)
-c = np.where((a == 1) & (b == 1), 1.0, 0.0)
-d = np.subtract(b13, b11)
-d = np.where(d <= 0.5, 1.0, 0.0)
-e = np.where((c == 1) & (d == 1), 1.0, 0.0)
+umbnigth = funtions_ceniza.ceniza_umbral(a,b,c,b14)
+print ("Algoritmo terminado")
+#Crea tif Geostacionario
 
-#blst = np.where((blst > 273.15) & (blst < 283.15), 0.0, blst)
-
-#sat.sensor.prod-YYYY.MMDD.HHmm
-funtions.array2raster(outdir+"goes16.abi.ASH-"+sdate_id+'.tif', e)
-funtions.array2raster(outdir+"goes16.abi.13_15-"+sdate_id+'.tif', a)
-funtions.array2raster(outdir+"goes16.abi.14_15-"+sdate_id+'.tif', b)
-funtions.array2raster(outdir+"goes16.abi.C-"+sdate_id+'.tif', c)
-funtions.array2raster(outdir+"goes16.abi.D-"+sdate_id+'.tif', d)
+ds_ref=gdal.Open(b04nc)
+print ("Creando TIF")
+funtions_ceniza.creaTif(ds_ref, umbnigth,path_output+"prueba.tif")
