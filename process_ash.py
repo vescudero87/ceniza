@@ -29,10 +29,11 @@ a = np.subtract(b13, b15)
 b = np.subtract(b11, b13)
 c = np.subtract(b07, b13)
 
-umbnigth = funtions_ceniza.ceniza_umbral(a,b,c,b14)
+ds_ref=gdal.Open(b04nc)
+
+umbnigth = funtions_ceniza.ceniza_umbral(a,b,c,b14,ds_ref)
 print ("Algoritmo terminado")
 #Crea tif Geostacionario
 
-ds_ref=gdal.Open(b04nc)
 print ("Creando TIF")
 funtions_ceniza.creaTif(ds_ref, umbnigth,path_output+"prueba.tif")

@@ -1,11 +1,17 @@
 import os
 import re
 import sys
+import funciones_utiles
+from pysolar.solar import *
+import datetime
 from glob import glob
 import numpy as np
 from scipy.signal import convolve2d
 from osgeo import gdal,osr
 from netCDF4 import Dataset
+from pyproj import Transformer
+
+
 
 def list_file(path_input,band):
     firstfile=glob(path_input+"*"+band+"*")
@@ -61,12 +67,13 @@ def array2raster(newRasterfilename, array):
     #outRaster.SetProjection(outRasterSRS.ExportToWkt())
     outband.FlushCache()
 
-def ceniza_umbral(a,b,c,b14):
+def ceniza_umbral(a,b,c,b14,ds):
     cenum=np.zeros(a.shape)
     nx=a.shape[0]
     ny=a.shape[1]
     for i in range(nx):
         for j in range(ny):
+            lat_log(ds,i,j)
             if ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2)):
                 cenum[i,j]=1
             elif ((a[i,j] <= 1) and (b[i,j] >= -0.5) and (c[i,j] >= 2)):
@@ -91,3 +98,18 @@ def creaTif(dsRef,npy,output):
     dst_ds.GetRasterBand(1).WriteArray(npy)
     dst_ds.FlushCache()
     dst_ds = None
+
+def lat_log(ds,fila,columna):
+    nx,ny,xmin,ymax,xres,yres,xmax,ymin = funciones_utiles.obtieneParametrosGeoTrasform(ds)
+    xgeo=(columna * xres) + xmin +xres/2
+    ygeo=(fila * yres) + ymin +yres/2
+    transformer = Transformer.from_crs("+proj=geos +h=35786023.0 +ellps=GRS80 +lat_0=0.0 +lon_0=-75.0 +sweep=x +no_defs","EPSG:4326", always_xy=True)
+    xlong_ylat=transformer.transform(xgeo, ygeo)
+    print(xlong_ylat)
+
+def prue_cenith():
+    dobj = datetime.datetime(2017,7,20,7,tzinfo=datetime.timezone.utc) - datetime.timedelta(hours=4)
+    sza = float(90) - get_altitude(25.0657, 55.17128, dobj)
+    print ("timezone = UTC+4,",sza)
+
+prue_cenith()
