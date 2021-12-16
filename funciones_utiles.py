@@ -47,7 +47,7 @@ def RGB(r,g,b,tile,anio,fecha,fechaProc,pathOutputGeoTiff,pathOutputPeta):
     # MANDA A PETA
     os.system('scp '+nombre+' lanotadm@stratus:'+pathOutputPeta+'l2/geotiff/sargazo/'+tile+'/')
 
-def plot(pathInput, pathOutput):
+""" def plot(pathInput, pathOutput):
     
     print('Procesando: '+pathInput)
     ds, data = tifToNumpy(pathInput)
