@@ -80,3 +80,13 @@ def plot(pathInput, pathOutput):
     name = pathOutput+pathInput.split('/')[-1].split('.tif')[0]+'.png'
 
     plt.savefig(name,dpi=300,bbox_inches='tight', pad_inches=0)
+
+'''
+Funcion que obtiene un numero para el nombre de la imagen
+'''
+def getNumber(path):
+    return int(path.split('/')[-1].split('_')[-1].split('.')[0])
+
+'''
+Funcion que obtiene la extension de una imagen
+'''
