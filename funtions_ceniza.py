@@ -10,6 +10,8 @@ from scipy.signal import convolve2d
 from osgeo import gdal,osr
 from netCDF4 import Dataset
 from pyproj import Transformer
+import pytz
+
 
 
 
@@ -67,18 +69,31 @@ def array2raster(newRasterfilename, array):
     #outRaster.SetProjection(outRasterSRS.ExportToWkt())
     outband.FlushCache()
 
-def ceniza_umbral(a,b,c,b14,ds):
+def ceniza_umbral(a,b,c,b14,b04,ds,dobj):
     cenum=np.zeros(a.shape)
     nx=a.shape[0]
     ny=a.shape[1]
     for i in range(nx):
         for j in range(ny):
-            lat_log(ds,i,j)
-            if ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2)):
+            #Calcula angulo zenital
+            sun_zenith=lat_log(ds,i,j,dobj)
+            if ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2) and sun_zenith > 90):
                 cenum[i,j]=1
-            elif ((a[i,j] <= 1) and (b[i,j] >= -0.5) and (c[i,j] >= 2)):
+            elif ((a[i,j] <= 1) and (b[i,j] >= -0.5) and (c[i,j] >= 2) and sun_zenith > 90):
                 cenum[i,j]=2
-            elif ((a[i,j] <= 3) and (b[i,j] >= -1) and (c[i,j] >= 2) and (b14[i,j] < 273)):
+            elif ((a[i,j] <= 3) and (b[i,j] >= -1) and (c[i,j] >= 2) and (b14[i,j] < 273) and sun_zenith > 90):
+                cenum[i,j]=3
+            elif ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2) and (b04[i,j] >= 0.002) and sun_zenith < 90 and sun_zenith > 70):
+                cenum[i,j]=1
+            elif ((a[i,j] <= 1) and (b[i,j] >= -0.5) and (c[i,j] >= 2) and (b04[i,j] >= 0.002) and (b14[i,j] < 273) and sun_zenith < 90 and sun_zenith > 70):
+                cenum[i,j]=2
+            elif ((a[i,j] <= 3) and (b[i,j] >= -1) and (c[i,j] >= 2) and (b04[i,j] >= 0.002) and (b14[i,j] < 273) and sun_zenith < 90 and sun_zenith > 70):
+                cenum[i,j]=3
+            elif ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2) and (b04[i,j] >= 0.002) and sun_zenith < 70):
+                cenum[i,j]=1
+            elif ((a[i,j] <= 1) and (b[i,j] >= -0.5) and (c[i,j] >= 2) and (b04[i,j] >= 0.002) and sun_zenith < 70):
+                cenum[i,j]=2
+            elif ((a[i,j] <= 3) and (b[i,j] >= -1) and (c[i,j] >= 2) and (b04[i,j] >= 0.002) and (b14[i,j] < 273) and sun_zenith < 70):
                 cenum[i,j]=3
             else: 
                 cenum[i,j]=0
@@ -99,17 +114,28 @@ def creaTif(dsRef,npy,output):
     dst_ds.FlushCache()
     dst_ds = None
 
-def lat_log(ds,fila,columna):
+def lat_log(ds,fila,columna,dobj):
     nx,ny,xmin,ymax,xres,yres,xmax,ymin = funciones_utiles.obtieneParametrosGeoTrasform(ds)
-    xgeo=(columna * xres) + xmin +xres/2
-    ygeo=(fila * yres) + ymin +yres/2
+    xgeo=(columna * xres) + xmin +xres
+    ygeo=(fila * yres) + ymin +yres
     transformer = Transformer.from_crs("+proj=geos +h=35786023.0 +ellps=GRS80 +lat_0=0.0 +lon_0=-75.0 +sweep=x +no_defs","EPSG:4326", always_xy=True)
     xlong_ylat=transformer.transform(xgeo, ygeo)
-    print(xlong_ylat)
+    lat=xlong_ylat[1]
+    long=xlong_ylat[0]
+    sun_zenith=prue_cenith(lat,long,dobj)
+    return sun_zenith
+#    print(xres, xmin, yres, ymin)
+#    print(xlong_ylat)
+#    print (xgeo,ygeo)
 
-def prue_cenith():
-    dobj = datetime.datetime(2017,7,20,7,tzinfo=datetime.timezone.utc) - datetime.timedelta(hours=4)
-    sza = float(90) - get_altitude(25.0657, 55.17128, dobj)
-    print ("timezone = UTC+4,",sza)
+def prue_cenith(lat,long,dobj):
+#    dobj = datetime.datetime.now(datetime.timezone.utc)
+    sza = float(90) - get_altitude(lat, long, dobj)
+    return sza
+#    print ("Angulo Zenital" sza)
 
-prue_cenith()
+def get_time(file):
+    date_split=file.split("\\")[-1].split("_")[3].split("s")[1][:-3]
+    date_time=datetime.datetime.strptime(date_split,"%Y%j%H%M")
+    date_time = date_time.replace(tzinfo=pytz.UTC)
+    return date_time
