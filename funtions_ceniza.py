@@ -76,6 +76,7 @@ def ceniza_umbral(a,b,c,b14,b04,ds,dobj):
     for i in range(nx):
         for j in range(ny):
             #Calcula angulo zenital
+            print ("Aplicando umbrales para dia noche y crepusculo")
             sun_zenith=lat_log(ds,i,j,dobj)
             if ((a[i,j] <= 0) and (b[i,j] >= 0) and (c[i,j] >= 2) and sun_zenith > 90):
                 cenum[i,j]=1
@@ -122,6 +123,7 @@ def lat_log(ds,fila,columna,dobj):
     xlong_ylat=transformer.transform(xgeo, ygeo)
     lat=xlong_ylat[1]
     long=xlong_ylat[0]
+    print ("Calculando Sun zentih")
     sun_zenith=prue_cenith(lat,long,dobj)
     return sun_zenith
 #    print(xres, xmin, yres, ymin)
