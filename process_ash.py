@@ -6,8 +6,10 @@ import glob
 import numpy as np
 from osgeo import gdal,osr
 import os
-path_input="D:\\PROY_CENIZA_GIT\\ceniza\\input\\"
-path_output="D:\PROY_CENIZA_GIT\ceniza\output\\"
+#path_input="D:\\PROY_CENIZA_GIT\\ceniza\\input\\"
+#path_output="D:\PROY_CENIZA_GIT\ceniza\output\\"
+path_input="/home/lanotadm/ash/ceniza/input/"
+path_output="/home/lanotadm/ash/ceniza/output/"
 #Ultimo netCDF
 print ("Listando bandas")
 b04nc=funtions_ceniza.list_file(path_input,'C04_')
