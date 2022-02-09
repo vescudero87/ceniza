@@ -12,6 +12,7 @@ import os
 path_input="/home/lanotadm/ash/ceniza/input/"
 path_output="/home/lanotadm/ash/ceniza/output/"
 path_aux="/home/lanotadm/ash/ceniza/auxiliares/"
+path_sza="/home/lanotadm/ash/ceniza/sun_angle/"
 
 #Ultimo netCDF
 print ("Listando bandas")
@@ -36,7 +37,7 @@ b15 = funtions_ceniza.leeNC(b15nc,"CMI")
 
 #Tiempo de imagen
 #dobj = funtions_ceniza.get_time(b04nc)
-sun = funtions_ceniza.tif2array(path_aux,'sza-')
+sun = funtions_ceniza.tif2array(path_sza,'sza-')
 #Algoritmo
 print ("Aplicando algorítmo ")
 print ("Calculando transmisividad inversa")

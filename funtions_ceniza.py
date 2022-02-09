@@ -12,8 +12,8 @@ from netCDF4 import Dataset
 from pyproj import Transformer
 import pytz
 
-def tif2array(path_aux,band):
-    dsr = gdal.Open(path_aux+"*"+band+"*")
+def tif2array(path_sza,band):
+    dsr = gdal.Open(path_sza+"*"+band+"*")
     np_array = np.array(dsr.ReadAsArray())
     return np_array
 
