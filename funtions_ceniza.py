@@ -12,8 +12,10 @@ from netCDF4 import Dataset
 from pyproj import Transformer
 import pytz
 
-
-
+def tif2array(path_aux,band):
+    dsr = gdal.Open(path_aux+"*"+band+"*")
+    np_array = np.array(dsr.ReadAsArray())
+    return np_array
 
 def list_file(path_input,band):
     firstfile=glob(path_input+"*"+band+"*")
@@ -52,6 +54,8 @@ def leeNC(path_input,var):
     data = nc.variables[var][:].data
     return data
 
+
+
 def array2raster(newRasterfilename, array):
     global geotransform
     global projection
@@ -68,7 +72,7 @@ def array2raster(newRasterfilename, array):
     #outRasterSRS.ImportFromEPSG(4326)
     #outRaster.SetProjection(outRasterSRS.ExportToWkt())
     outband.FlushCache()
-
+"""""
 def ceniza_umbral(a,b,c,b14,b04,ds,dobj):
     cenum=np.zeros(a.shape)
     nx=a.shape[0]
@@ -99,7 +103,7 @@ def ceniza_umbral(a,b,c,b14,b04,ds,dobj):
             else: 
                 cenum[i,j]=0
     return cenum
-
+"""
 def creaTif(dsRef,npy,output):
     geotransform = dsRef.GetGeoTransform()
     nx = npy.shape[0]
@@ -114,7 +118,7 @@ def creaTif(dsRef,npy,output):
     dst_ds.GetRasterBand(1).WriteArray(npy)
     dst_ds.FlushCache()
     dst_ds = None
-
+"""""
 def lat_log(ds,fila,columna,dobj):
     nx,ny,xmin,ymax,xres,yres,xmax,ymin = funciones_utiles.obtieneParametrosGeoTrasform(ds)
     xgeo=(columna * xres) + xmin +xres
@@ -141,3 +145,4 @@ def get_time(file):
     date_time=datetime.datetime.strptime(date_split,"%Y%j%H%M")
     date_time = date_time.replace(tzinfo=pytz.UTC)
     return date_time
+"""
