@@ -36,7 +36,7 @@ b15 = funtions_ceniza.leeNC(b15nc,"CMI")
 
 #Tiempo de imagen
 #dobj = funtions_ceniza.get_time(b04nc)
-sun = funtions_ceniza.tif2array(path_aux,'cenith')
+sun = funtions_ceniza.tif2array(path_aux,'sza-')
 #Algoritmo
 print ("Aplicando algorítmo ")
 print ("Calculando transmisividad inversa")
