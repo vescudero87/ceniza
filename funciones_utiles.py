@@ -1,3 +1,6 @@
+from importlib.resources import path
+
+
 def creaTif(dsRef,npy,output):
     geotransform = dsRef.GetGeoTransform()
     nx = dsRef.RasterXSize
@@ -46,3 +49,10 @@ def RGB(r,g,b,tile,anio,fecha,fechaProc,pathOutputGeoTiff,pathOutputPeta):
     os.system('gdal_merge.py -separate -co PHOTOMETRIC=RGB -o '+nombre+' '+r+' '+g+' '+b)
     # MANDA A PETA
     os.system('scp '+nombre+' lanotadm@stratus:'+pathOutputPeta+'l2/geotiff/sargazo/'+tile+'/')
+
+def reproyeccion(pathInput, pathOuput):
+    os.system('gdalwarp -t_srs EPSG:4326 '+pathInput+' '+pathOuput)
+
+def recorte(cuadrante, pathInput, pathOutput):
+    # cuandrante ulx uly lrx lry
+    os.system('gdal_translate -projwin '+cuadrante+' '+pathInput+' '+pathOutput)
