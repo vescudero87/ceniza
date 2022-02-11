@@ -55,4 +55,4 @@ def reproyeccion(pathInput, pathOuput):
 
 def recorte(cuadrante, pathInput, pathOutput):
     # cuandrante ulx uly lrx lry
-    os.system('gdal_translate -projwin '+cuadrante+' '+pathInput+' '+pathOutput)
+    os.system('gdal_translate -projwin '+str(cuadrante[0])+' '+str(cuadrante[1])+' '+str(cuadrante[2])+' '+str(cuadrante[3])+' '+pathInput+' '+pathOutput)
