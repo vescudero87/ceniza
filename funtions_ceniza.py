@@ -17,11 +17,12 @@ def get_time(file):
     date_time=datetime.datetime.strptime(date_split,"%Y%j%H%M")
     date_time = date_time.replace(tzinfo=pytz.UTC)
     return date_time
-"""
-def sun_zenith(date_time):
-    sun_senith = os.system(sun_zenith_angle_map_conus+" "+date_time)
-    return sun_senith
-"""
+
+def sun_zenith(date_time,path_input):
+    os.chdir(path_input)
+    os.system("sun_zenith_angle_map_conus "+date_time)
+
+
 def list_file_tif(path_sza,band):
     firstfile=glob(path_sza+band+"*")
     firstfile.sort()
