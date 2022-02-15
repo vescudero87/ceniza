@@ -17,11 +17,11 @@ def get_time(file):
     date_time=datetime.datetime.strptime(date_split,"%Y%j%H%M")
     date_time = date_time.replace(tzinfo=pytz.UTC)
     return date_time
-
+"""
 def sun_zenith(date_time):
     sun_senith = os.system(sun_zenith_angle_map_conus+" "+date_time)
     return sun_senith
-
+"""
 def list_file_tif(path_sza,band):
     firstfile=glob(path_sza+band+"*")
     firstfile.sort()
@@ -32,10 +32,6 @@ def tif2array(szatif):
     dsr = gdal.Open(szatif)
     np_array = dsr.GetRasterBand(1).ReadAsArray()
     return np_array
-
-def sun_zenith():
-    os.system
-
 
 def list_file(path_input,band):
     firstfile=glob(path_input+"*"+band+"*")
