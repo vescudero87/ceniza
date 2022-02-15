@@ -12,10 +12,30 @@ from netCDF4 import Dataset
 from pyproj import Transformer
 import pytz
 
-def tif2array(path_sza,band):
-    dsr = gdal.Open(path_sza+"*"+band+"*")
-    np_array = np.array(dsr.ReadAsArray())
+def get_time(file):
+    date_split=file.split("\\")[-1].split("_")[3].split("s")[1][:-3]
+    date_time=datetime.datetime.strptime(date_split,"%Y%j%H%M")
+    date_time = date_time.replace(tzinfo=pytz.UTC)
+    return date_time
+
+def sun_zenith(date_time):
+    sun_senith = os.system(sun_zenith_angle_map_conus+" "+date_time)
+    return sun_senith
+
+def list_file_tif(path_sza,band):
+    firstfile=glob(path_sza+band+"*")
+    firstfile.sort()
+    lastif=firstfile[-1]
+    return lastif
+
+def tif2array(szatif):
+    dsr = gdal.Open(szatif)
+    np_array = dsr.GetRasterBand(1).ReadAsArray()
     return np_array
+
+def sun_zenith():
+    os.system
+
 
 def list_file(path_input,band):
     firstfile=glob(path_input+"*"+band+"*")

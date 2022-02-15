@@ -22,7 +22,7 @@ b11nc=funtions_ceniza.list_file(path_input,'C11_')
 b13nc=funtions_ceniza.list_file(path_input,'C13_')
 b14nc=funtions_ceniza.list_file(path_input,'C14_')
 b15nc=funtions_ceniza.list_file(path_input,'C15_')
-
+szatif=funtions_ceniza.list_file_tif(path_sza,'sza-')
 #Obtiene imagen de referencia
 os.system("gdal_translate NETCDF:" +b04nc+":CMI ref.tif")
 ds_ref=gdal.Open("ref.tif")
@@ -37,7 +37,10 @@ b15 = funtions_ceniza.leeNC(b15nc,"CMI")
 
 #Tiempo de imagen
 #dobj = funtions_ceniza.get_time(b04nc)
-sun = funtions_ceniza.tif2array(path_sza,'sza-')
+
+print ("Importando SZA geotif")
+sun = funtions_ceniza.tif2array(szatif)
+
 #Algoritmo
 print ("Aplicando algorítmo ")
 print ("Calculando transmisividad inversa")
