@@ -18,6 +18,12 @@ def get_time(file):
     date_time = date_time.replace(tzinfo=pytz.UTC)
     return date_time
 
+def get_date(file):
+    date_split=file.split("\\")[-1].split("_")[3].split("s")[1][:-3]
+    date=datetime.datetime.strptime(date_split,"%Y%j%H%M")
+    date= date_time.replace(tzinfo=pytz.UTC)
+    return date_time
+
 def sun_zenith(date_time,path_input):
     os.chdir(path_input)
     os.system("sun_zenith_angle_map_conus "+date_time)
