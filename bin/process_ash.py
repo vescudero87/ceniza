@@ -49,10 +49,10 @@ b14 = funtions_ceniza.leeNC(b14nc,"CMI")
 b15 = funtions_ceniza.leeNC(b15nc,"CMI")
 mask=funtions_ceniza.leeNC(masknc,"BCM")
 
-
+print ("Calculando Sun Zenith")
 print ("Importando SZA geotif")
 sun = funtions_ceniza.tif2array(szatif)
-
+print ("Sun Zenith Calculado")
 #Algoritmo
 print ("Aplicando algorítmo ")
 print ("Calculando transmisividad inversa")
