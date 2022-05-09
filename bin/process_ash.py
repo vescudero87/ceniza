@@ -22,6 +22,7 @@ b11nc=funtions_ceniza.list_file(path_input,'C11_')
 b13nc=funtions_ceniza.list_file(path_input,'C13_')
 b14nc=funtions_ceniza.list_file(path_input,'C14_')
 b15nc=funtions_ceniza.list_file(path_input,'C15_')
+masknc=funtions_ceniza.list_file(path_input,'ACM')
 
 #Dia y hora de la imagen
 date=funtions_ceniza.get_date(b04nc)
@@ -46,6 +47,7 @@ b11 = funtions_ceniza.leeNC(b11nc,"CMI")
 b13 = funtions_ceniza.leeNC(b13nc,"CMI")
 b14 = funtions_ceniza.leeNC(b14nc,"CMI")
 b15 = funtions_ceniza.leeNC(b15nc,"CMI")
+mask=funtions_ceniza.leeNC(masknc,"BCM")
 
 
 print ("Importando SZA geotif")
